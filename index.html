@@ -1,62 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-window.dataLayer = window.dataLayer || [];
-</script>
-
-<!-- Google Tag Manager -->
-<script>
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id=GTM-MTNLXLVB'+dl;
-f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MTNLXLVB');
-</script>
+    <meta charset="UTF-8">
     <title>Helping Hand Donation</title>
+
+    <!-- DataLayer -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-MTNLXLVB');
+    </script>
+    <!-- End Google Tag Manager -->
+
 </head>
 
-    <script>
-document.querySelector('a[href="#XJKDHSTQ"]').addEventListener('click', function() {
-    dataLayer.push({
-        event: 'checkout_open'
-    });
-});
-</script>
-    
 <body>
 
-    <!-- Google Tag Manager (noscript) -->
+<!-- Google Tag Manager (noscript) -->
 <noscript>
-<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTNLXLVB"
-height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTNLXLVB"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
+<!-- End Google Tag Manager -->
 
 <h1>Helping Hand</h1>
 <p>Support our mission by making a donation.</p>
 
 <!-- Fundraise Up button -->
-<a href="#XJKDHSTQ">Donate Now</a>
+<a href="#XJKDHSTQ" id="donateBtn">Donate Now</a>
 
 <!-- Fundraise Up script -->
 <script>
-(function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
-.split(','),i,o=function(n){return'function'==typeof n?o.l.push([arguments])&&o
-:function(){return o.l.push([n,arguments])&&o}},t=d.getElementsByTagName(s)[0],
-j=d.createElement(s);j.async=!0;j.src='https://cdn.fundraiseup.com/widget/'+a;
-t.parentNode.insertBefore(j,t);o.s=Date.now();o.v=4;o.h=w.location.href;o.l=[];
-for(i=0;i<7;i++)o[l[i]]=o(l[i]);w[n]=o}
+(function(w,d,s,n,a){
+  if(!w[n]){
+    var l='call,catch,on,once,set,then,track'.split(','),
+    i,o=function(n){
+      return 'function'==typeof n ? o.l.push([arguments])&&o :
+      function(){ return o.l.push([n,arguments])&&o }
+    },
+    t=d.getElementsByTagName(s)[0],
+    j=d.createElement(s);
+    j.async=!0;
+    j.src='https://cdn.fundraiseup.com/widget/'+a;
+    t.parentNode.insertBefore(j,t);
+    o.s=Date.now();
+    o.v=4;
+    o.h=w.location.href;
+    o.l=[];
+    for(i=0;i<7;i++) o[l[i]]=o(l[i]);
+    w[n]=o;
+  }
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
 
-    <script>
-FundraiseUp.on('donationComplete', function(data) {
-    dataLayer.push({
-        event: 'purchase',
-        value: data.amount,
-        currency: data.currency
+<!-- Checkout Open tracking -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var donateBtn = document.getElementById("donateBtn");
+
+  if (donateBtn) {
+    donateBtn.addEventListener("click", function() {
+      window.dataLayer.push({
+        event: "checkout_open"
+      });
+      console.log("checkout_open pushed");
     });
+  }
+});
+</script>
+
+<!-- Donation Complete tracking -->
+<script>
+FundraiseUp.on('donationComplete', function(data) {
+
+  window.dataLayer.push({
+    event: 'purchase',
+    value: data.amount,
+    currency: data.currency,
+    transaction_id: data.id || Date.now()
+  });
+
+  console.log("purchase pushed", data);
+
 });
 </script>
 
