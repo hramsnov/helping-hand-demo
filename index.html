@@ -2,88 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Helping Hand Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- GA4 -->
+<title>Donation Test</title>
+
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
-function gtag(){window.dataLayer = window.dataLayer || []; dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-4CFSHYMM3E');
-</script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-<!-- Fundraise Up -->
-<script>
-(function(w,d,s,n,a){
-if(!w[n]){
-var l='call,catch,on,once,set,then,track'.split(','),i,
-o=function(n){
-return'function'==typeof n?o.l.push([arguments])&&o:
-function(){return o.l.push([n,arguments])&&o}
-},
-t=d.getElementsByTagName(s)[0],
-j=d.createElement(s);
-j.async=!0;
-j.src='https://cdn.fundraiseup.com/widget/'+a;
-t.parentNode.insertBefore(j,t);
-o.s=Date.now();
-o.v=4;
-o.h=w.location.href;
-o.l=[];
-for(i=0;i<7;i++)o[l[i]]=o(l[i]);
-w[n]=o;
-}
-})(window,document,'script','FundraiseUp','AEMZUDUM');
+  gtag('config', 'G-4CFSHYMM3E', {
+    debug_mode: true
+  });
 </script>
-
-<style>
-body {
-font-family: Arial, sans-serif;
-text-align: center;
-padding-top: 100px;
-}
-</style>
 
 </head>
-<body>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial;">
 
-<h1>Helping Hand Donation Demo</h1>
-
-<!-- ОРИГИНАЛЬНАЯ КНОПКА -->
-<a href="#XJKDHSTQ" id="donateBtn"></a>
+<button id="donateButton" style="padding:20px 40px;font-size:20px;cursor:pointer;">
+  Donate
+</button>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 
-console.log("Tracking ready");
+  const donateButton = document.getElementById("donateButton");
 
-let purchaseSent = false;
+  donateButton.addEventListener("click", function() {
 
-document.addEventListener("click", function(e){
+    console.log("Donate clicked → sending purchase event");
 
-  const btn = e.target.closest('a[href="#XJKDHSTQ"]');
-  if (!btn) return;
+    gtag("event", "purchase", {
+      transaction_id: "donate_" + Date.now(),
+      value: 700,
+      currency: "USD",
+      items: [{
+        item_id: "donation",
+        item_name: "Test Donation",
+        price: 700,
+        quantity: 1
+      }]
+    });
 
-  if (purchaseSent) return;
-  purchaseSent = true;
+    console.log("Purchase event sent");
 
-  console.log("Donate button clicked — sending purchase 700 USD");
-
-  gtag('event', 'purchase', {
-    transaction_id: 'CLICK_' + Date.now(),
-    currency: 'USD',
-    value: 700,
-    items: [{
-      item_id: 'donation',
-      item_name: 'Test Donation',
-      price: 700,
-      quantity: 1
-    }]
   });
 
-  console.log("GA4 purchase sent");
-
 });
-
 </script>
 
 </body>
