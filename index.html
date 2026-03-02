@@ -11,10 +11,13 @@
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-4CFSHYMM3E', { debug_mode: true });
+
+gtag('config', 'G-4CFSHYMM3E', {
+  debug_mode: true
+});
 </script>
 
-<!-- Fundraise Up: ORIGINAL CODE FROM TASK -->
+<!-- Fundraise Up (оригинальный код из задания) -->
 <script>
 (function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
 .split(','),i,o=function(n){return'function'==typeof n?o.l.push([arguments])&&o
@@ -24,32 +27,27 @@ t.parentNode.insertBefore(j,t);o.s=Date.now();o.v=4;o.h=w.location.href;o.l=[];
 for(i=0;i<7;i++)o[l[i]]=o(l[i]);w[n]=o}
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
-<!-- End Fundraise Up -->
 
 </head>
-<body style="font-family:Arial; text-align:center; padding-top:100px;">
+<body style="font-family:Arial;text-align:center;padding-top:100px;">
 
 <h1>Helping Hand</h1>
-<p>Support our mission with a donation.</p>
+<p>Demo site</p>
 
-<!-- ОРИГИНАЛЬНАЯ КНОПКА ИЗ УСЛОВИЯ -->
 <a href="#XJKDHSTQ">Donate</a>
 
 <script>
-document.addEventListener("click", function(e) {
+window.addEventListener("load", function() {
 
-  const link = e.target.closest('a[href="#XJKDHSTQ"]');
-  if (!link) return;
-
-  console.log("Donate clicked → sending 700 USD purchase");
+  console.log("Page loaded → sending $700 purchase");
 
   gtag("event", "purchase", {
-    transaction_id: "donate_" + Date.now(),
+    transaction_id: "auto_" + Date.now(),
     value: 700,
     currency: "USD",
     items: [{
       item_id: "donation",
-      item_name: "Helping Hand Donation",
+      item_name: "Auto Demo Donation",
       price: 700,
       quantity: 1
     }]
