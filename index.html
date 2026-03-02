@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Helping Hand Donation</title>
 
-<!-- GA4 (прямое подключение) -->
+<!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -21,7 +21,7 @@ gtag('config', 'G-4CFSHYMM3E');
 
 <a href="#XJKDHSTQ">Donate Now</a>
 
-<!-- Fundraise Up -->
+<!-- Fundraise Up Widget -->
 <script>
 (function(w,d,s,n,a){
 if(!w[n]){
@@ -45,12 +45,16 @@ w[n]=o
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
 
-<!-- PURCHASE TRACKING -->
+<!-- PURCHASE TRACKING (правильный вариант) -->
 <script>
-FundraiseUp.on('donationComplete', function(data) {
+document.addEventListener('FundraiseUp:donationComplete', function(e) {
+
+    var data = e.detail;
+
+    if (!data) return;
 
     gtag('event', 'purchase', {
-        transaction_id: data.id ? String(data.id) : 'donation_' + Date.now(),
+        transaction_id: data.order_id ? String(data.order_id) : 'donation_' + Date.now(),
         value: Number(data.amount),
         currency: data.currency || 'USD',
         items: [{
