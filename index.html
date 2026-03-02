@@ -38,74 +38,120 @@ w[n]=o;
 </script>
 
 <style>
-body { font-family: Arial; text-align:center; padding-top:100px; }
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+padding-top: 100px;
+}
 </style>
 
 </head>
 <body>
 
 <h1>Helping Hand Donation Demo</h1>
+
+<!-- ОРИГИНАЛЬНАЯ КНОПКА -->
 <a href="#XJKDHSTQ"></a>
 
 <script>
 
 console.log("Tracking script loaded");
 
-// ==============================
-// DEBUG: Log ALL postMessages
-// ==============================
+let purchaseSent = false;
+let checkoutSent = false;
 
 window.addEventListener("message", function(event) {
-  console.log("POSTMESSAGE RECEIVED:", event.origin, event.data);
-});
 
-// ==============================
-// Detect FundraiseUp iframe
-// ==============================
+  if (!event.origin.includes("fundraiseup.com")) return;
 
-let purchaseSent = false;
-let checkoutOpened = false;
+  const data = event.data;
 
-const observer = new MutationObserver(function() {
+  if (!data) return;
 
-  const iframe = document.querySelector('iframe');
+  console.log("FundraiseUp RAW message:", data);
 
-  if (iframe && !checkoutOpened) {
-    checkoutOpened = true;
-    console.log("Iframe detected:", iframe.src);
+  // Если строка — пробуем распарсить
+  let payload = data;
+  if (typeof data === "string") {
+    try {
+      payload = JSON.parse(data);
+    } catch(e) {
+      return;
+    }
+  }
+
+  if (typeof payload !== "object") return;
+
+  console.log("FundraiseUp parsed message:", payload);
+
+  // =========================
+  // CHECKOUT OPEN
+  // =========================
+  if (!checkoutSent &&
+      (payload.event === "checkoutOpen" ||
+       payload.type === "checkout_open" ||
+       payload.name === "checkout_open")) {
+
+    checkoutSent = true;
 
     gtag('event', 'begin_checkout');
+
     console.log("GA4 begin_checkout sent");
   }
 
-  if (!document.querySelector('iframe')
-      && checkoutOpened
-      && !purchaseSent) {
+  // =========================
+  // DONATION COMPLETE
+  // =========================
+  if (!purchaseSent &&
+      (payload.event === "donationComplete" ||
+       payload.type === "donation_complete" ||
+       payload.name === "donation_complete")) {
 
     purchaseSent = true;
 
-    console.log("Iframe removed — sending purchase");
+    // Пытаемся найти сумму в любом возможном поле
+    let amount =
+      payload.donation?.amount ||
+      payload.amount ||
+      payload.total ||
+      payload.value ||
+      0;
+
+    let currency =
+      payload.donation?.currency ||
+      payload.currency ||
+      'USD';
+
+    let transactionId =
+      payload.transaction?.id ||
+      payload.transaction_id ||
+      ('FU_' + Date.now());
+
+    amount = parseFloat(amount);
+
+    console.log("Extracted:", amount, currency, transactionId);
+
+    if (!amount || amount <= 0) {
+      console.log("Amount not detected, using fallback 700");
+      amount = 700;
+    }
 
     gtag('event', 'purchase', {
-      transaction_id: 'FU_' + Date.now(),
-      currency: 'USD',
-      value: 700,
+      transaction_id: transactionId,
+      currency: currency,
+      value: amount,
       items: [{
-        item_id: 'donation',
+        item_id: transactionId,
         item_name: 'Donation',
-        price: 700,
+        price: amount,
         quantity: 1
       }]
     });
 
     console.log("GA4 purchase sent");
+
   }
 
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true
 });
 
 </script>
