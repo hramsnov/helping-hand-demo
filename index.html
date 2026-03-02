@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Donation Test</title>
+<title>Donation Page</title>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
@@ -19,20 +18,25 @@
 </script>
 
 </head>
-<body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial;">
+<body style="font-family: Arial; display:flex; justify-content:center; align-items:center; height:100vh;">
 
-<button id="donateButton" style="padding:20px 40px;font-size:20px;cursor:pointer;">
+<!-- ПРИМЕР реальной кнопки (можешь удалить если у тебя уже есть своя) -->
+<button style="padding:20px 40px;font-size:20px;cursor:pointer;">
   Donate
 </button>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("click", function(e) {
 
-  const donateButton = document.getElementById("donateButton");
+  const button = e.target.closest("button, a");
 
-  donateButton.addEventListener("click", function() {
+  if (!button) return;
 
-    console.log("Donate clicked → sending purchase event");
+  const text = button.innerText.trim().toLowerCase();
+
+  if (text.includes("donate")) {
+
+    console.log("Real donate button clicked → sending purchase");
 
     gtag("event", "purchase", {
       transaction_id: "donate_" + Date.now(),
@@ -40,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
       currency: "USD",
       items: [{
         item_id: "donation",
-        item_name: "Test Donation",
+        item_name: "Real Button Donation",
         price: 700,
         quantity: 1
       }]
@@ -48,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Purchase event sent");
 
-  });
+  }
 
 });
 </script>
