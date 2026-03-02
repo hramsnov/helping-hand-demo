@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <title>Helping Hand Demo</title>
 
-<!-- Google Analytics 4 (NO Google Tag, direct gtag only) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Google Analytics 4 (direct, no GTM) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-
 gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX');
-
+gtag('config', 'G-4CFSHYMM3E');
 </script>
 
 <!-- Fundraise Up -->
@@ -46,15 +44,6 @@ font-family: Arial, sans-serif;
 text-align: center;
 padding-top: 100px;
 }
-button {
-padding: 15px 30px;
-font-size: 18px;
-background: #28a745;
-color: white;
-border: none;
-border-radius: 6px;
-cursor: pointer;
-}
 </style>
 
 </head>
@@ -62,39 +51,42 @@ cursor: pointer;
 
 <h1>Helping Hand Donation Demo</h1>
 
-<!-- Fundraise Up button anchor -->
+<!-- ОРИГИНАЛЬНАЯ кнопка Fundraise Up -->
 <a href="#XJKDHSTQ"></a>
-
-<button onclick="openCheckout()">Donate $700 (Test Mode)</button>
 
 <script>
 
-function openCheckout() {
+// =====================================
+// TRACK FUNDRAISE UP EVENTS (NO JS API)
+// =====================================
 
-  // Track checkout open in GA4
-  gtag('event', 'checkout_open', {
-    event_category: 'FundraiseUp',
-    event_label: 'Checkout Opened'
-  });
+window.addEventListener("message", function(event) {
 
-  // Open Fundraise Up checkout
-  window.location.hash = 'XJKDHSTQ';
-}
+  // Security check: accept only FundraiseUp messages
+  if (!event.origin.includes("fundraiseup.com")) return;
 
+  var data = event.data;
 
-// Detect successful donation via URL change (Fundraise Up thank-you state)
-window.addEventListener('hashchange', function() {
+  if (!data || !data.event) return;
 
-  if (window.location.hash.includes('thank-you')) {
+  // 1️⃣ Checkout opened
+  if (data.event === "checkoutOpen") {
+    gtag('event', 'begin_checkout', {
+      currency: 'USD'
+    });
+  }
+
+  // 2️⃣ Successful donation
+  if (data.event === "donationComplete") {
 
     gtag('event', 'purchase', {
-      transaction_id: 'TEST_' + Date.now(),
-      currency: 'USD',
-      value: 700,
+      transaction_id: data.transaction?.id || ('TEST_' + Date.now()),
+      currency: data.donation?.currency || 'USD',
+      value: data.donation?.amount || 700,
       items: [{
-        item_id: 'donation',
-        item_name: 'Test Donation',
-        price: 700,
+        item_id: data.transaction?.id || 'donation',
+        item_name: 'Donation',
+        price: data.donation?.amount || 700,
         quantity: 1
       }]
     });
