@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Helping Hand Demo</title>
 
-<!-- GA4 (direct, no GTM) -->
+<!-- GA4 (direct integration, no GTM) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -51,88 +51,64 @@ padding-top: 100px;
 
 <h1>Helping Hand Donation Demo</h1>
 
-<!-- Оригинальная кнопка Fundraise Up -->
+<!-- ОРИГИНАЛЬНАЯ КНОПКА -->
 <a href="#XJKDHSTQ"></a>
 
 <script>
 
-// ===========================================
-// TRACK CHECKOUT OPEN (postMessage listener)
-// ===========================================
+// ===============================
+// FUNDRAISE UP → GA4 INTEGRATION
+// ===============================
+
+let purchaseSent = false;
+let checkoutSent = false;
 
 window.addEventListener("message", function(event) {
 
+  // Принимаем только сообщения от Fundraise Up
   if (!event.origin.includes("fundraiseup.com")) return;
 
-  var data = event.data;
-  if (!data || !data.event) return;
+  const data = event.data;
 
-  if (data.event === "checkoutOpen") {
-    gtag('event', 'begin_checkout');
+  if (!data || typeof data !== "object") return;
+
+  console.log("FundraiseUp message:", data);
+
+  // 1️⃣ Checkout opened
+  if (data.event === "checkoutOpen" && !checkoutSent) {
+    checkoutSent = true;
+
+    gtag('event', 'begin_checkout', {
+      currency: data.currency || 'USD'
+    });
+
+    console.log("GA4 begin_checkout sent");
   }
 
-});
-
-
-// ===========================================
-// TRACK PURCHASE BY READING THANK YOU TEXT
-// ===========================================
-
-let purchaseSent = false;
-
-function observeThankYou() {
-
-  const observer = new MutationObserver(function() {
-
-    if (purchaseSent) return;
-
-    // Ищем thank-you заголовок
-    const thankYouEl = document.querySelector('[data-qa="thank-you-header-label"]');
-
-    if (!thankYouEl) return;
-
-    const text = thankYouEl.innerText;
-
-    // Пример текста:
-    // "You've started a ฿810 THB monthly donation."
-
-    const match = text.match(/([\d,\.]+)\s?([A-Z]{3})/);
-
-    if (!match) return;
-
-    let amount = match[1].replace(/,/g, '');
-    let currency = match[2];
-
-    amount = parseFloat(amount);
-
-    if (!amount || !currency) return;
-
+  // 2️⃣ Donation completed
+  if (data.event === "donationComplete" && !purchaseSent) {
     purchaseSent = true;
 
+    const amount = data.donation?.amount || 0;
+    const currency = data.donation?.currency || 'USD';
+    const transactionId = data.transaction?.id || ('FU_' + Date.now());
+
     gtag('event', 'purchase', {
-      transaction_id: 'FU_' + Date.now(),
+      transaction_id: transactionId,
       currency: currency,
       value: amount,
       items: [{
-        item_id: 'donation',
-        item_name: 'Monthly Donation',
+        item_id: transactionId,
+        item_name: 'Donation',
         price: amount,
         quantity: 1
       }]
     });
 
     console.log("GA4 purchase sent:", amount, currency);
+  }
 
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-
-}
-
-observeThankYou();
+});
 
 </script>
 
