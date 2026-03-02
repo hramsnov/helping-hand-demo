@@ -1,32 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Helping Hand Donation</title>
+<title>Helping Hand Demo</title>
 
-<!-- GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
+<!-- Google Analytics 4 (NO Google Tag, direct gtag only) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
+
 gtag('js', new Date());
-gtag('config', 'G-4CFSHYMM3E');
+gtag('config', 'G-XXXXXXXXXX');
+
 </script>
 
-</head>
-<body>
-
-<h1>Helping Hand</h1>
-<p>Support our mission by making a donation.</p>
-
-<a href="#XJKDHSTQ">Donate Now</a>
-
-<!-- Fundraise Up Widget -->
+<!-- Fundraise Up -->
 <script>
 (function(w,d,s,n,a){
 if(!w[n]){
-var l='call,catch,on,once,set,then,track'.split(','),
-i,o=function(n){
+var l='call,catch,on,once,set,then,track'.split(','),i,
+o=function(n){
 return'function'==typeof n?o.l.push([arguments])&&o:
 function(){return o.l.push([n,arguments])&&o}
 },
@@ -40,32 +34,75 @@ o.v=4;
 o.h=w.location.href;
 o.l=[];
 for(i=0;i<7;i++)o[l[i]]=o(l[i]);
-w[n]=o
+w[n]=o;
 }
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
+<!-- End Fundraise Up -->
 
-<!-- PURCHASE TRACKING (правильный вариант) -->
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+padding-top: 100px;
+}
+button {
+padding: 15px 30px;
+font-size: 18px;
+background: #28a745;
+color: white;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Helping Hand Donation Demo</h1>
+
+<!-- Fundraise Up button anchor -->
+<a href="#XJKDHSTQ"></a>
+
+<button onclick="openCheckout()">Donate $700 (Test Mode)</button>
+
 <script>
-document.addEventListener('FundraiseUp:donationComplete', function(e) {
 
-    var data = e.detail;
+function openCheckout() {
 
-    if (!data) return;
+  // Track checkout open in GA4
+  gtag('event', 'checkout_open', {
+    event_category: 'FundraiseUp',
+    event_label: 'Checkout Opened'
+  });
+
+  // Open Fundraise Up checkout
+  window.location.hash = 'XJKDHSTQ';
+}
+
+
+// Detect successful donation via URL change (Fundraise Up thank-you state)
+window.addEventListener('hashchange', function() {
+
+  if (window.location.hash.includes('thank-you')) {
 
     gtag('event', 'purchase', {
-        transaction_id: data.order_id ? String(data.order_id) : 'donation_' + Date.now(),
-        value: Number(data.amount),
-        currency: data.currency || 'USD',
-        items: [{
-            item_id: 'donation',
-            item_name: 'Donation',
-            price: Number(data.amount),
-            quantity: 1
-        }]
+      transaction_id: 'TEST_' + Date.now(),
+      currency: 'USD',
+      value: 700,
+      items: [{
+        item_id: 'donation',
+        item_name: 'Test Donation',
+        price: 700,
+        quantity: 1
+      }]
     });
 
+  }
+
 });
+
 </script>
 
 </body>
