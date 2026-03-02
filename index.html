@@ -38,69 +38,53 @@ w[n]=o;
 </script>
 
 <style>
-body {
-font-family: Arial, sans-serif;
-text-align: center;
-padding-top: 100px;
-}
+body { font-family: Arial; text-align:center; padding-top:100px; }
 </style>
 
 </head>
 <body>
 
 <h1>Helping Hand Donation Demo</h1>
-
-<!-- ОРИГИНАЛЬНАЯ КНОПКА -->
 <a href="#XJKDHSTQ"></a>
 
 <script>
 
-// ===============================
-// 1️⃣ TRACK CLICK (checkout open)
-// ===============================
+console.log("Tracking script loaded");
 
-document.addEventListener("click", function(e) {
+// ==============================
+// DEBUG: Log ALL postMessages
+// ==============================
 
-  const link = e.target.closest('a[href="#XJKDHSTQ"]');
+window.addEventListener("message", function(event) {
+  console.log("POSTMESSAGE RECEIVED:", event.origin, event.data);
+});
 
-  if (link) {
-    console.log("Checkout clicked");
+// ==============================
+// Detect FundraiseUp iframe
+// ==============================
 
-    gtag('event', 'begin_checkout', {
-      currency: 'USD'
-    });
+let purchaseSent = false;
+let checkoutOpened = false;
 
+const observer = new MutationObserver(function() {
+
+  const iframe = document.querySelector('iframe');
+
+  if (iframe && !checkoutOpened) {
+    checkoutOpened = true;
+    console.log("Iframe detected:", iframe.src);
+
+    gtag('event', 'begin_checkout');
     console.log("GA4 begin_checkout sent");
   }
 
-});
-
-
-// ===============================
-// 2️⃣ TRACK IFRAME CLOSE (purchase)
-// ===============================
-
-let checkoutWasOpened = false;
-let purchaseSent = false;
-
-// Detect iframe appearance
-const observer = new MutationObserver(function() {
-
-  const iframe = document.querySelector('iframe[src*="fundraiseup"]');
-
-  if (iframe && !checkoutWasOpened) {
-    checkoutWasOpened = true;
-    console.log("Checkout iframe detected");
-  }
-
-  // If iframe disappeared after being opened → donation likely completed
-  if (!document.querySelector('iframe[src*="fundraiseup"]')
-      && checkoutWasOpened
+  if (!document.querySelector('iframe')
+      && checkoutOpened
       && !purchaseSent) {
 
     purchaseSent = true;
 
-    console.log("Checkout closed — sending purchase");
+    console.log("Iframe removed — sending purchase");
 
     gtag('event', 'purchase', {
       transaction_id: 'FU_' + Date.now(),
