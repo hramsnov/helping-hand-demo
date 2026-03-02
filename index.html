@@ -1,90 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Helping Hand Donation Demo</title>
+    <meta charset="UTF-8">
+    <title>Helping Hand Donation</title>
 
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    <!-- DataLayer -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+    </script>
 
-    gtag('js', new Date());
-    gtag('config', 'G-4CFSHYMM3E');
-  </script>
-
+    <!-- Google Tag Manager -->
+    <script>
+    (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id=GTM-MTNLXLVB'+dl;
+        f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MTNLXLVB');
+    </script>
 </head>
+
 <body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MTNLXLVB"
+height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 
 <h1>Helping Hand</h1>
 <p>Support our mission by making a donation.</p>
 
-<!-- Fundraise Up Button -->
+<!-- Donate Button -->
 <a href="#XJKDHSTQ">Donate Now</a>
 
 <!-- Fundraise Up Script -->
 <script>
 (function(w,d,s,n,a){
-  if(!w[n]){
-    var l='call,catch,on,once,set,then,track'.split(','),
-    i,o=function(n){
-      return 'function'==typeof n ? o.l.push([arguments])&&o :
-      function(){ return o.l.push([n,arguments])&&o }
-    },
-    t=d.getElementsByTagName(s)[0],
-    j=d.createElement(s);
-    j.async=!0;
-    j.src='https://cdn.fundraiseup.com/widget/'+a;
-    t.parentNode.insertBefore(j,t);
-    o.s=Date.now();
-    o.v=4;
-    o.h=w.location.href;
-    o.l=[];
-    for(i=0;i<7;i++) o[l[i]]=o(l[i]);
-    w[n]=o;
-  }
+    if(!w[n]){
+        var l='call,catch,on,once,set,then,track'.split(','),
+        i,o=function(n){
+            return'function'==typeof n?o.l.push([arguments])&&o:
+            function(){return o.l.push([n,arguments])&&o}
+        },
+        t=d.getElementsByTagName(s)[0],
+        j=d.createElement(s);
+        j.async=!0;
+        j.src='https://cdn.fundraiseup.com/widget/'+a;
+        t.parentNode.insertBefore(j,t);
+        o.s=Date.now();
+        o.v=4;
+        o.h=w.location.href;
+        o.l=[];
+        for(i=0;i<7;i++)o[l[i]]=o(l[i]);
+        w[n]=o
+    }
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
 
-<!-- Fundraise Up → GA4 Integration via JS API -->
+<!-- PURCHASE TRACKING (РАБОЧАЯ ВЕРСИЯ) -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+FundraiseUp.on('donationComplete', function(data) {
 
-  /* ============================
-     CHECKOUT OPEN EVENT
-  ============================ */
+    window.dataLayer = window.dataLayer || [];
 
-  FundraiseUp.on('checkoutOpen', function(data) {
-
-    gtag('event', 'begin_checkout', {
-      currency: data.currency || 'USD',
-      value: data.amount || 0
+    window.dataLayer.push({
+        event: 'purchase',
+        transaction_id: data.id ? String(data.id) : 'donation_' + Date.now(),
+        value: Number(data.amount),
+        currency: data.currency || 'USD',
+        items: [{
+            item_id: 'donation',
+            item_name: 'Donation',
+            price: Number(data.amount),
+            quantity: 1
+        }]
     });
-
-    console.log("GA4 begin_checkout sent", data);
-  });
-
-
-  /* ============================
-     DONATION COMPLETE EVENT
-  ============================ */
-
-  FundraiseUp.on('donationComplete', function(data) {
-
-    gtag('event', 'purchase', {
-      transaction_id: data.id || Date.now().toString(),
-      value: data.amount,
-      currency: data.currency,
-      items: [{
-        item_name: "Donation",
-        quantity: 1,
-        price: data.amount
-      }]
-    });
-
-    console.log("GA4 purchase sent", data);
-  });
 
 });
 </script>
