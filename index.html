@@ -34,12 +34,20 @@ for(i=0;i<7;i++)o[l[i]]=o(l[i]);w[n]=o}
 <h1>Helping Hand</h1>
 <p>Demo site</p>
 
+<!-- Оригинальная кнопка -->
 <a href="#XJKDHSTQ">Donate</a>
 
 <script>
 window.addEventListener("load", function() {
 
-  console.log("Page loaded → sending $700 purchase");
+  console.log("Page loaded → sending checkout_open");
+
+  gtag("event", "checkout_open", {
+    currency: "USD",
+    value: 700
+  });
+
+  console.log("Sending purchase 700 USD");
 
   gtag("event", "purchase", {
     transaction_id: "auto_" + Date.now(),
