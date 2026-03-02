@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helping Hand – Demo</title>
 
-<title>Your Page</title>
-
-<!-- Google tag (gtag.js) -->
+<!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -15,46 +14,48 @@ gtag('js', new Date());
 gtag('config', 'G-4CFSHYMM3E', { debug_mode: true });
 </script>
 
-</head>
-<body>
+<!-- Fundraise Up: ORIGINAL CODE FROM TASK -->
+<script>
+(function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
+.split(','),i,o=function(n){return'function'==typeof n?o.l.push([arguments])&&o
+:function(){return o.l.push([n,arguments])&&o}},t=d.getElementsByTagName(s)[0],
+j=d.createElement(s);j.async=!0;j.src='https://cdn.fundraiseup.com/widget/'+a;
+t.parentNode.insertBefore(j,t);o.s=Date.now();o.v=4;o.h=w.location.href;o.l=[];
+for(i=0;i<7;i++)o[l[i]]=o(l[i]);w[n]=o}
+})(window,document,'script','FundraiseUp','AEMZUDUM');
+</script>
+<!-- End Fundraise Up -->
 
-<!-- ТВОЙ ОРИГИНАЛЬНЫЙ КОД САЙТА И ВИДЖЕТ ДОНАТА ОСТАЮТСЯ ЗДЕСЬ -->
-<!-- НИЧЕГО НЕ УДАЛЯЙ И НЕ МЕНЯЙ -->
+</head>
+<body style="font-family:Arial; text-align:center; padding-top:100px;">
+
+<h1>Helping Hand</h1>
+<p>Support our mission with a donation.</p>
+
+<!-- ОРИГИНАЛЬНАЯ КНОПКА ИЗ УСЛОВИЯ -->
+<a href="#XJKDHSTQ">Donate</a>
 
 <script>
-(function() {
+document.addEventListener("click", function(e) {
 
-  function sendPurchase() {
-    console.log("Donate detected → sending $700 purchase");
+  const link = e.target.closest('a[href="#XJKDHSTQ"]');
+  if (!link) return;
 
-    gtag("event", "purchase", {
-      transaction_id: "donate_" + Date.now(),
-      value: 700,
-      currency: "USD",
-      items: [{
-        item_id: "donation",
-        item_name: "Real Donation",
-        price: 700,
-        quantity: 1
-      }]
-    });
-  }
+  console.log("Donate clicked → sending 700 USD purchase");
 
-  document.addEventListener("click", function(e) {
+  gtag("event", "purchase", {
+    transaction_id: "donate_" + Date.now(),
+    value: 700,
+    currency: "USD",
+    items: [{
+      item_id: "donation",
+      item_name: "Helping Hand Donation",
+      price: 700,
+      quantity: 1
+    }]
+  });
 
-    const element = e.target.closest("button, a, div");
-
-    if (!element) return;
-
-    const text = (element.innerText || "").toLowerCase();
-
-    if (text.includes("donate")) {
-      sendPurchase();
-    }
-
-  }, true);
-
-})();
+});
 </script>
 
 </body>
