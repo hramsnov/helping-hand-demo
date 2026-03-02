@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Helping Hand Demo</title>
 
-<!-- GA4 (direct integration, no GTM) -->
+<!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4CFSHYMM3E"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -36,7 +36,6 @@ w[n]=o;
 }
 })(window,document,'script','FundraiseUp','AEMZUDUM');
 </script>
-<!-- End Fundraise Up -->
 
 <style>
 body {
@@ -57,57 +56,72 @@ padding-top: 100px;
 <script>
 
 // ===============================
-// FUNDRAISE UP → GA4 INTEGRATION
+// 1️⃣ TRACK CLICK (checkout open)
 // ===============================
 
-let purchaseSent = false;
-let checkoutSent = false;
+document.addEventListener("click", function(e) {
 
-window.addEventListener("message", function(event) {
+  const link = e.target.closest('a[href="#XJKDHSTQ"]');
 
-  // Принимаем только сообщения от Fundraise Up
-  if (!event.origin.includes("fundraiseup.com")) return;
-
-  const data = event.data;
-
-  if (!data || typeof data !== "object") return;
-
-  console.log("FundraiseUp message:", data);
-
-  // 1️⃣ Checkout opened
-  if (data.event === "checkoutOpen" && !checkoutSent) {
-    checkoutSent = true;
+  if (link) {
+    console.log("Checkout clicked");
 
     gtag('event', 'begin_checkout', {
-      currency: data.currency || 'USD'
+      currency: 'USD'
     });
 
     console.log("GA4 begin_checkout sent");
   }
 
-  // 2️⃣ Donation completed
-  if (data.event === "donationComplete" && !purchaseSent) {
+});
+
+
+// ===============================
+// 2️⃣ TRACK IFRAME CLOSE (purchase)
+// ===============================
+
+let checkoutWasOpened = false;
+let purchaseSent = false;
+
+// Detect iframe appearance
+const observer = new MutationObserver(function() {
+
+  const iframe = document.querySelector('iframe[src*="fundraiseup"]');
+
+  if (iframe && !checkoutWasOpened) {
+    checkoutWasOpened = true;
+    console.log("Checkout iframe detected");
+  }
+
+  // If iframe disappeared after being opened → donation likely completed
+  if (!document.querySelector('iframe[src*="fundraiseup"]')
+      && checkoutWasOpened
+      && !purchaseSent) {
+
     purchaseSent = true;
 
-    const amount = data.donation?.amount || 0;
-    const currency = data.donation?.currency || 'USD';
-    const transactionId = data.transaction?.id || ('FU_' + Date.now());
+    console.log("Checkout closed — sending purchase");
 
     gtag('event', 'purchase', {
-      transaction_id: transactionId,
-      currency: currency,
-      value: amount,
+      transaction_id: 'FU_' + Date.now(),
+      currency: 'USD',
+      value: 700,
       items: [{
-        item_id: transactionId,
+        item_id: 'donation',
         item_name: 'Donation',
-        price: amount,
+        price: 700,
         quantity: 1
       }]
     });
 
-    console.log("GA4 purchase sent:", amount, currency);
+    console.log("GA4 purchase sent");
   }
 
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
 });
 
 </script>
